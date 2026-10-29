@@ -12,3 +12,8 @@ wheels/
 # Parquet files
 *.parquet
 
+# TF Files
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+.terraform/
