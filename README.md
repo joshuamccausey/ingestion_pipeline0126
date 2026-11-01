@@ -15,7 +15,23 @@ The primary goal of this project was to create an ETL pipline to extract data fr
 - One other thing that I have been thinking a lot about through this project is that "tools are tools are tools". By that, I mean that at the end of the day, the job of the data engineer is to find useful and valuable data that a company can leverage to generate profits or create value. There are so many tools and avenues that can be utilized to accomplish this task, it is up to the engineer to pick and choose the best tools for the job. 
 
 # Running the Repo
-The only requirement to run this pipline is to have Docker installed so that once you pull the code, you can then build the Docker Compose images which host the postgresql database as well as the Pgadmin container. Then you can build and run the Dockerfile contained in the repo to build the actual ETL pipeline container which will then pull the remote data source, parse it, and then load it into the Postgresql container. After completing those two steps, the database should be loaded with the target dataset.
+The only requirement to run this pipline is to have Docker installed so that once you pull the code, you can then build the Docker Compose images which host the postgresql database as well as the Pgadmin container. Then you can build and run the Dockerfile contained in the repo to build the actual ETL pipeline container which will then pull the remote data source, parse it, and then load it into the Postgresql container. After completing those two steps, the database should be loaded with the target dataset. The actual steps are as follows:
+- Clone the repo to your local workstation.
+- cd into the cloned folder.
+- Run "docker compose up -d"  - wait for the two containers to come online.
+- Run "docker build -t taxi_ingest:001 ." to built the ETL image.
+- Find the docker virtual network that the compose containers created. By default it should be "ingestion_pipeline0126_default" to match the parent folder, but you can check with "docker network ls".
+- Build the ETL container and push in the required parameters
+"docker run -it \
+  --network=ingestion_pipeline0126_default \
+  taxi_ingest:v001 \
+    --pg-user=root \
+    --pg-pass=root \
+    --pg-host=pgdatabase \
+    --pg-port=5432 \
+    --pg-db=ny_taxi \
+    --target-table=yellow_taxi_trips"
+- After doing the above, you should see a loading bar chunking through the data set, 100,000 rows at a time. There should be just over 1.3 million rows for it to work through so this normally takes a minute or two on my m1 macbook air.
 
 # Tools Used
 - Python https://docs.python.org/3/
